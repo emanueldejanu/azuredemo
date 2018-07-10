@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Demo2.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,9 +18,17 @@ namespace Demo2.Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
             Configuration = configuration;
+            CreatePicturesDirectory(hostingEnvironment);
+        }
+
+        private static void CreatePicturesDirectory(IHostingEnvironment hostingEnvironment)
+        {
+            string path = Path.Combine(hostingEnvironment.WebRootPath, "pictures");
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
         }
 
         public IConfiguration Configuration { get; }
@@ -33,6 +45,12 @@ namespace Demo2.Web
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddDbContext<AppDatabaseContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("AppDb")));
+
+            // Register AutoMapper profiles
+            services.AddAutoMapper();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
