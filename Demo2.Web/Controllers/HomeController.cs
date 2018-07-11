@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 using Demo2.Web.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Demo2.Web.Controllers
 {
@@ -18,18 +19,26 @@ namespace Demo2.Web.Controllers
     {
         private readonly AppDatabaseContext context;
         private readonly IHostingEnvironment hostingEnvironment;
+        private readonly ILogger<HomeController> logger;
         private readonly IMapper mapper;
 
-        public HomeController(AppDatabaseContext context, IHostingEnvironment hostingEnvironment, IMapper mapper)
+        public HomeController(
+                AppDatabaseContext context,
+                IHostingEnvironment hostingEnvironment,
+                ILogger<HomeController> logger,
+                IMapper mapper
+            )
         {
             this.context = context;
             this.hostingEnvironment = hostingEnvironment;
+            this.logger = logger;
             this.mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
         {
             List<Photo> photos = await context.Photos.ToListAsync();
+            logger.LogWarning("Loadded {Count} photos", photos.Count);
             return View(mapper.Map<List<PhotoModel>>(photos));
         }
 

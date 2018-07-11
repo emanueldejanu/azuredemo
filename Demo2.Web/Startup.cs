@@ -1,26 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Demo2.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Demo2.Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
+        public Startup(
+            IConfiguration configuration,
+            ILoggerFactory loggerFactory,
+            IServiceProvider serviceProvider,
+            IHostingEnvironment hostingEnvironment)
         {
             Configuration = configuration;
+            // Add logging to Azure Application Insights.
+            loggerFactory.AddApplicationInsights(serviceProvider, LogLevel.Debug);
             CreatePicturesDirectory(hostingEnvironment);
         }
 
