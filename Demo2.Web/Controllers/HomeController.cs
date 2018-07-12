@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Demo2.Web.Controllers
 {
+    [Microsoft.AspNetCore.Authorization.Authorize]
     public class HomeController : Controller
     {
         private readonly AppDatabaseContext context;

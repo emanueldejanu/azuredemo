@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <ApplicationInsightsResourceId>/subscriptions/75138ff0-ad11-4992-b647-932c8c9c0b34/resourcegroups/Demo2.Web/providers/microsoft.insights/components/Demo2.Web</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/75138ff0-ad11-4992-b647-932c8c9c0b34/resourcegroups/Demo2.Web/providers/microsoft.insights/components/Demo2.Web</ApplicationInsightsAnnotationResourceId>
+    <WebProject_DirectoryAccessLevelKey>0</WebProject_DirectoryAccessLevelKey>
   </PropertyGroup>
 
   <ItemGroup>
