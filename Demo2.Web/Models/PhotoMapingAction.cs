@@ -19,7 +19,7 @@ namespace Demo2.Web.Models
             var files = Directory.GetFiles(picturesPath, source.Id + ".*");
 
             if (files.Length > 0)
-                destination.ImageUrl = "pictures/" + Path.GetFileName(files[0]);
+                destination.ImageUrl = "/pictures/" + Path.GetFileName(files[0]);
         }
     }
 }

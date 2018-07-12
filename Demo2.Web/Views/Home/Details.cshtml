@@ -1,10 +1,11 @@
 @model PhotoModel
 @{
     ViewData["Title"] = "Details";
+    bool isAuthenticated = User.Identity?.IsAuthenticated ?? false;
 }
 <h2>Details</h2>
 <div>
-    <h4>Todo</h4>
+    <h4>Photo</h4>
     <hr />
     <dl class="dl-horizontal">
         @if (!string.IsNullOrEmpty(Model.ImageUrl))
@@ -37,6 +38,6 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    @if (isAuthenticated) { <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> <text>|</text> }
     <a asp-action="Index">Back to List</a>
 </div>

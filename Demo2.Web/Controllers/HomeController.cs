@@ -11,11 +11,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 using Demo2.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 
 namespace Demo2.Web.Controllers
 {
-    [Microsoft.AspNetCore.Authorization.Authorize]
     public class HomeController : Controller
     {
         private readonly AppDatabaseContext context;
@@ -80,7 +80,7 @@ namespace Demo2.Web.Controllers
             return View(mapper.Map<PhotoModel>(photo));
         }
 
-        // GET: Todos/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View(new EditPhotoModel { Date = DateTime.UtcNow });
@@ -89,6 +89,7 @@ namespace Demo2.Web.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(EditPhotoModel editPhoto)
         {
@@ -141,6 +142,7 @@ namespace Demo2.Web.Controllers
             }
         }
 
+        [Authorize]
         public async Task<IActionResult> Edit(Guid id)
         {
             Photo photo = await context.Photos.SingleOrDefaultAsync(m => m.Id == id);
@@ -152,32 +154,34 @@ namespace Demo2.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, EditPhotoModel editTodo)
+        public async Task<IActionResult> Edit(Guid id, EditPhotoModel editPhoto)
         {
-            Photo todoEntity = await context.Photos.SingleOrDefaultAsync(m => m.Id == id);
-            if (todoEntity == null)
+            Photo photo = await context.Photos.SingleOrDefaultAsync(m => m.Id == id);
+            if (photo == null)
             {
                 return NotFound();
             }
 
-            todoEntity.Description = editTodo.Description;
-            todoEntity.Date = editTodo.Date;
+            photo.Description = editPhoto.Description;
+            photo.Date = editPhoto.Date;
 
             if (ModelState.IsValid)
             {
-                todoEntity.ModifiedAt = DateTime.UtcNow;
-                context.Update(todoEntity);
+                photo.ModifiedAt = DateTime.UtcNow;
+                context.Update(photo);
                 await context.SaveChangesAsync();
 
-                await SaveFile(editTodo.Image, todoEntity.Id);
+                await SaveFile(editPhoto.Image, photo.Id);
 
                 return RedirectToAction("Index");
             }
 
-            return View(mapper.Map<EditPhotoModel>(todoEntity));
+            return View(mapper.Map<EditPhotoModel>(photo));
         }
 
+        [Authorize]
         public async Task<IActionResult> Delete(Guid id)
         {
             Photo photo = await context.Photos.SingleOrDefaultAsync(m => m.Id == id);
@@ -190,6 +194,7 @@ namespace Demo2.Web.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
