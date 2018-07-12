@@ -29,8 +29,28 @@ namespace Demo2.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            List<Photo> photos = await context.Photos.ToListAsync();
-            return View(mapper.Map<List<PhotoModel>>(photos));
+            //List<Photo> photos = await context.Photos.ToListAsync();
+            //return View(mapper.Map<List<PhotoModel>>(photos));
+
+            List<Photo> todoList = await context.Photos.ToListAsync();
+            Blob blob = new Blob();
+            var blobConnection = blob.GetAllBlobs().Result;
+
+            List<PhotoModel> photoModel = new List<PhotoModel>();
+            foreach (var image in blobConnection)
+            {
+                photoModel.Add(new PhotoModel
+                {
+                    Id = Guid.NewGuid(),
+                    CreatedAt = DateTime.Now,
+                    ModifiedAt = DateTime.Now,
+                    Date = DateTime.Now,
+                    Description = "Got It from the storage account",
+                    ImageUrl = image.Uri.ToString()
+                });
+            }
+
+            return View(photoModel);
         }
 
         public IActionResult About()
@@ -82,22 +102,26 @@ namespace Demo2.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(EditPhotoModel editPhoto)
         {
+            Blob blob = new Blob();
+            string cotainerName = "alex";
+            await blob.UploadBlob(cotainerName, editPhoto.Image);
+
             if (ModelState.IsValid)
             {
-                var photo = new Photo
-                {
-                    Id = Guid.NewGuid(),
-                    CreatedAt = DateTime.UtcNow,
-                    ModifiedAt = DateTime.UtcNow,
-                    Description = editPhoto.Description,
-                    Date = editPhoto.Date
-                };
+                //var todoEntity = new TodoEntity
+                //{
+                //    Id = Guid.NewGuid(),
+                //    CreatedAt = DateTime.UtcNow,
+                //    ModifiedAt = DateTime.UtcNow,
+                //    Description = editTodo.Description,
+                //    Date = editTodo.Date
+                //};
 
-                context.Photos.Add(photo);
+                //context.Todo.Add(todoEntity);
 
-                await context.SaveChangesAsync();
+                //await context.SaveChangesAsync();
 
-                await SaveFile(editPhoto.Image, photo.Id);
+                //await SaveFile(editTodo.Image, todoEntity.Id);
 
                 return RedirectToAction("Index");
             }
